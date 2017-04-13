@@ -1,4 +1,6 @@
 本文转自：http://cache.baiducontent.com/c?m=9d78d513d9d430dc4f9d94697c17c0161f4381132ba6a3020fd78438e0732f41506793ac51230777d7d20c6d16de484beb802104361451b68cc9f80a9ae785295fd67a693208c1014cdc43e98d0432c0538d47b9f144b2adf045c2ef848fc8542496044367c2adcd094649cd6cf00962a3e0c2194b080decba7636a4073634982046b140fce038&p=882a9546d7d21aed19bfc52d0214bb&newp=882a9546d78c1bbe49b2ce2d02148f231610db2151d4d7146b82c825d7331b001c3bbfb423241203d0c17a6307a94256e1f43275370923a3dda5c91d9fb4c57479c77d256143dc&user=baidu&fm=sc&query=%CA%B2%C3%B4%CA%B1%BA%F2%D3%A6%B8%C3%D3%C3runloop&qid=ecb4aeb2000085c3&p1=1
+
+
 Run Loop是一让线程能随时处理事件但不退出的机制。RunLoop 实际上是一个对象，这个对象管理了其需要处理的事件和消息，并提供了一个入口函数来执行Event Loop 的逻辑。线程执行了这个函数后，就会一直处于这个函数内部 “接受消息->等待->处理” 的循环中，直到这个循环结束（比如传入 quit 的消息），函数返回。让线程在没有处理消息时休眠以避免资源占用、在有消息到来时立刻被唤醒。
 
 OSX/iOS 系统中，提供了两个这样的对象：NSRunLoop 和 CFRunLoopRef。CFRunLoopRef 是在 CoreFoundation 框架内的，它提供了纯 C 函数的 API，所有这些 API 都是线程安全的。NSRunLoop 是基于 CFRunLoopRef 的封装，提供了面向对象的 API，但是这些 API 不是线程安全的。
@@ -33,6 +35,8 @@ NSRunLoop *runloop = [NSRunLoop currentRunLoop]; // 来获取到当前线程的r
 一个run loop就是一个事件处理循环，用来不停的监听和处理输入事件并将其分配到对应的目标上进行处理。
 
 NSRunLoop是一种更加高明的消息处理模式，他就高明在对消息处理过程进行了更好的抽象和封装，这样才能是的你不用处理一些很琐碎很低层次的具体消息的处理，在NSRunLoop中每一个消息就被打包在input source或者是timer source中了。使用run loop可以使你的线程在有工作的时候工作，没有工作的时候休眠，这可以大大节省系统资源。
+
+http://img.blog.csdn.net/20160519174759695?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQv/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center
 
 什么时候使用run loop
 仅当在为你的程序创建辅助线程的时候，你才需要显式运行一个run loop。Run loop是程序主线程基础设施的关键部分。所以，Cocoa和Carbon程序提供了代码运行主程序的循环并自动启动run loop。IOS程序中UIApplication的run方法（或Mac OS X中的NSApplication）作为程序启动步骤的一部分，它在程序正常启动的时候就会启动程序的主循环。类似的，RunApplicationEventLoop函数为Carbon程序启动主循环。如果你使用xcode提供的模板创建你的程序，那你永远不需要自己去显式的调用这些例程。
